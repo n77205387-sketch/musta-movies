@@ -86,6 +86,7 @@
                 if (token) {
                     loadUser();
                     loadMovies();
+                    loadUploadedFiles();
                 }
             }, [token]);
 
@@ -112,6 +113,22 @@
                     console.error('Error loading movies:', err);
                 } finally {
                     setLoading(false);
+                }
+            }
+
+            async function loadUploadedFiles() {
+                if (!token) return;
+                
+                try {
+                    const res = await fetch(`${API_URL}/upload/user/me`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    const data = await res.json();
+                    if (Array.isArray(data)) {
+                        setUploadedFiles(data);
+                    }
+                } catch (err) {
+                    console.error('Error loading uploads:', err);
                 }
             }
 
@@ -217,7 +234,6 @@
                 if (files.length === 0) return;
 
                 for (let file of files) {
-                    // Simulate upload progress
                     setUploadProgress(0);
                     const interval = setInterval(() => {
                         setUploadProgress(prev => {
@@ -231,8 +247,8 @@
 
                     try {
                         const formData = new FormData();
-                        formData.append('file', file);
-                        formData.append('type', 'movie');
+                        formData.append('fileName', file.name);
+                        formData.append('fileSize', file.size);
 
                         const res = await fetch(`${API_URL}/upload/movie`, {
                             method: 'POST',
@@ -245,7 +261,7 @@
 
                         if (res.ok) {
                             const data = await res.json();
-                            setUploadedFiles([...uploadedFiles, { type: 'movie', name: file.name, size: file.size, url: data.url, uploadedAt: new Date() }]);
+                            setUploadedFiles([...uploadedFiles, data.upload]);
                             setTimeout(() => setUploadProgress(0), 1000);
                         } else {
                             alert('Upload failed: ' + file.name);
@@ -270,7 +286,6 @@
                 if (files.length === 0) return;
 
                 for (let file of files) {
-                    // Simulate upload progress
                     setUploadProgress(0);
                     const interval = setInterval(() => {
                         setUploadProgress(prev => {
@@ -284,8 +299,8 @@
 
                     try {
                         const formData = new FormData();
-                        formData.append('file', file);
-                        formData.append('type', 'music');
+                        formData.append('fileName', file.name);
+                        formData.append('fileSize', file.size);
 
                         const res = await fetch(`${API_URL}/upload/music`, {
                             method: 'POST',
@@ -298,7 +313,7 @@
 
                         if (res.ok) {
                             const data = await res.json();
-                            setUploadedFiles([...uploadedFiles, { type: 'music', name: file.name, size: file.size, url: data.url, uploadedAt: new Date() }]);
+                            setUploadedFiles([...uploadedFiles, data.upload]);
                             setTimeout(() => setUploadProgress(0), 1000);
                         } else {
                             alert('Upload failed: ' + file.name);
@@ -323,7 +338,6 @@
                 if (files.length === 0) return;
 
                 for (let file of files) {
-                    // Simulate upload progress
                     setUploadProgress(0);
                     const interval = setInterval(() => {
                         setUploadProgress(prev => {
@@ -337,8 +351,8 @@
 
                     try {
                         const formData = new FormData();
-                        formData.append('file', file);
-                        formData.append('type', 'mixtape');
+                        formData.append('fileName', file.name);
+                        formData.append('fileSize', file.size);
                         formData.append('djName', user.username);
 
                         const res = await fetch(`${API_URL}/upload/mixtape`, {
@@ -352,7 +366,7 @@
 
                         if (res.ok) {
                             const data = await res.json();
-                            setUploadedFiles([...uploadedFiles, { type: 'mixtape', name: file.name, size: file.size, url: data.url, djName: user.username, uploadedAt: new Date() }]);
+                            setUploadedFiles([...uploadedFiles, data.upload]);
                             setTimeout(() => setUploadProgress(0), 1000);
                         } else {
                             alert('Upload failed: ' + file.name);
