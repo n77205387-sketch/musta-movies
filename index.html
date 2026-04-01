@@ -59,10 +59,6 @@
             const [uploadTab, setUploadTab] = useState("music");
             const [uploadProgress, setUploadProgress] = useState(0);
             const [uploadedFiles, setUploadedFiles] = useState([]);
-            const [movieInputRef, setMovieInputRef] = useState(null);
-            const [musicInputRef, setMusicInputRef] = useState(null);
-            const [mixtapeInputRef, setMixtapeInputRef] = useState(null);
-            const [mixtapeCollectionInputRef, setMixtapeCollectionInputRef] = useState(null);
 
             const categories = ["All", "Action", "Romance", "Horror", "Comedy", "Drama", "Adventure", "Thriller", "Animation"];
             
@@ -85,7 +81,11 @@
                 { dj: "DJ Zero Pro", count: 22, latest: "Underground Session" }
             ];
 
-            // Load user on mount
+            // Upload file handlers
+            function triggerFileUpload(inputId) {
+                const input = document.getElementById(inputId);
+                if (input) input.click();
+            }
             useEffect(() => {
                 if (token) {
                     loadUser();
@@ -666,15 +666,15 @@
                             </h2>
                             <input 
                                 type="file" 
-                                ref={el => setMovieInputRef(el)}
+                                id="upload-movie-btn"
                                 onChange={handleMovieUpload}
-                                accept="video/*,.mp3,.wav,.m4a,.flac"
+                                accept="video/*,.mp4,.mkv,.avi"
                                 multiple
                                 style={{display: 'none'}}
                             />
                             <button 
                                 type="button"
-                                onClick={() => movieInputRef?.click()}
+                                onClick={() => triggerFileUpload('upload-movie-btn')}
                                 className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-bold cursor-pointer transition">
                                 ⬆️ Upload Movie
                             </button>
@@ -776,7 +776,7 @@
                                 <h3 className="text-3xl font-bold mb-8">{selectedDJ} Mixtape Collection 🎚️</h3>
                                 <input 
                                     type="file" 
-                                    ref={el => setMixtapeCollectionInputRef(el)}
+                                    id="upload-mixtape-collection-btn"
                                     onChange={handleMixtapeUpload}
                                     accept="audio/*,.mp3,.wav,.m4a,.flac"
                                     multiple
@@ -784,7 +784,7 @@
                                 />
                                 <button 
                                     type="button"
-                                    onClick={() => mixtapeCollectionInputRef?.click()}
+                                    onClick={() => triggerFileUpload('upload-mixtape-collection-btn')}
                                     className="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg font-bold cursor-pointer transition">
                                     ⬆️ Upload Mixtape
                                 </button>
@@ -821,11 +821,11 @@
                                 
                                 <div 
                                     className="mb-6 p-8 border-2 border-dashed border-green-600 rounded-lg text-center hover:bg-gray-700 transition cursor-pointer"
-                                    onClick={() => musicInputRef?.click()}
+                                    onClick={() => triggerFileUpload('upload-music-btn')}
                                 >
                                     <input 
                                         type="file" 
-                                        ref={el => setMusicInputRef(el)}
+                                        id="upload-music-btn"
                                         onChange={handleMusicUpload}
                                         accept="audio/*,.mp3,.wav,.m4a,.flac"
                                         multiple
@@ -864,11 +864,11 @@
                                 
                                 <div 
                                     className="mb-6 p-8 border-2 border-dashed border-purple-600 rounded-lg text-center hover:bg-gray-700 transition cursor-pointer"
-                                    onClick={() => mixtapeInputRef?.click()}
+                                    onClick={() => triggerFileUpload('upload-mixtape-tab-btn')}
                                 >
                                     <input 
                                         type="file" 
-                                        ref={el => setMixtapeInputRef(el)}
+                                        id="upload-mixtape-tab-btn"
                                         onChange={handleMixtapeUpload}
                                         accept="audio/*,.mp3,.wav,.m4a,.flac"
                                         multiple
